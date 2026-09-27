@@ -22,12 +22,12 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping: 1}).ok'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     env:
-      MONGO_URI: mongodb+srv://devil123567_db_user:UfdylE47CeZhiI7q@cicdflaskapp.krdzyaw.mongodb.net/CiCdFlaskApp
+      MONGO_URI: mongodb://localhost:27017/test_student_db
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -116,7 +116,7 @@ jobs:
             TAG="${{ env.IMAGE_TAG }}"
             IMAGE_URI="$REGISTRY/$REPO:$TAG"
             CONTAINER_NAME="flask-cicd-demo"
-            APP_PORT=7000
+            APP_PORT=5000
             MONGO_URI="${{ secrets.MONGO_URI }}"
 
             echo "Authenticating to ECR..."
