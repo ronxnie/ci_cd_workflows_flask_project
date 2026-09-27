@@ -16,6 +16,18 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      MONGO_URI: mongodb+srv://devil123567_db_user:UfdylE47CeZhiI7q@cicdflaskapp.krdzyaw.mongodb.net/CiCdFlaskApp
     steps:
       - name: Checkout
         uses: actions/checkout@v5
