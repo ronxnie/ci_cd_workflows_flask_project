@@ -15,7 +15,5 @@ COPY . .
 # The Flask app listens on this port
 EXPOSE 5000
 
-ENV ENVIRONMENT = PRODUCTION
-
 # Run the app
 CMD ["python", "app.py"]

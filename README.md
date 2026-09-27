@@ -162,8 +162,6 @@ COPY . .
 # The Flask app listens on this port
 EXPOSE 5000
 
-ENV ENVIRONMENT = PRODUCTION
-
 # Run the app
 CMD ["python", "app.py"]
 ```
@@ -620,6 +618,9 @@ jobs:
    git commit -m "Trigger pipeline: initial full run"
    git push origin main
    ```
+
+![Git Initialized and Pushed](image-18.png)
+
 2. In your GitHub repo, go to the **Actions** tab — the workflow should start within seconds of the push automatically (no webhook setup needed; `on: push` handles it).
 3. Click into the running workflow → click each job to watch its live logs.
 4. Confirm all jobs go green, ending in **Deploy to EC2** and **Verify Health**.

@@ -9,6 +9,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REPO: flask-student-registration
 
+
 jobs:
   test:
     name: Test
