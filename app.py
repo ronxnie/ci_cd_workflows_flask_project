@@ -45,7 +45,7 @@ def health_check():
         mongo.db.command('ping') 
         return jsonify({"status": "healthy", "database": "connected"}), 200
     except Exception as e:
-        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+      return jsonify({"status": "unhealthy", "error": str(e)}), 503  
     
 # Add student
 @app.route('/add', methods=['GET', 'POST'])
