@@ -621,6 +621,8 @@ jobs:
 
 ![Git Initialized and Pushed](image-18.png)
 
+![New Set of Keys Updated](image-19.png)
+
 2. In your GitHub repo, go to the **Actions** tab — the workflow should start within seconds of the push automatically (no webhook setup needed; `on: push` handles it).
 3. Click into the running workflow → click each job to watch its live logs.
 4. Confirm all jobs go green, ending in **Deploy to EC2** and **Verify Health**.
