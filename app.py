@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 import certifi
 import os
+
+import pytest
 
 # Load env vars
 load_dotenv()
@@ -22,6 +24,29 @@ def index():
     students = mongo.db.students.find()
     return render_template('index.html', students=students)
 
+@pytest.fixture
+def client():
+    flask_app.config["TESTING"] = True
+    with flask_app.test_client() as client:
+        yield client
+        
+def test_health_endpoint_returns_status(client):
+    response = client.get("/health")
+    assert response.status_code in (200, 503)
+    data = response.get_json()
+    assert "status" in data
+    assert data["status"] in ("healthy", "unhealthy")
+    
+# Health check endpoint for EC2/Deployment validation
+@app.route('/health')
+def health_check():
+    try:
+        # Optional: Verify MongoDB connection is active
+        mongo.db.command('ping') 
+        return jsonify({"status": "healthy", "database": "connected"}), 200
+    except Exception as e:
+        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+    
 # Add student
 @app.route('/add', methods=['GET', 'POST'])
 def add_student():
@@ -61,5 +86,3 @@ def delete_student(student_id):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=5000)
-
-
