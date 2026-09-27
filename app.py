@@ -16,7 +16,18 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # Use certifi CA bundle explicitly for cross-platform TLS reliability
 # (notably fixes common macOS certificate verification failures).
-mongo = PyMongo(app, tlsCAFile=certifi.where())
+
+mongo_uri = os.getenv("MONGO_URI")
+app.config["MONGO_URI"] = mongo_uri
+app.secret_key = os.getenv("SECRET_KEY")
+
+# Only Atlas (mongodb+srv://) needs/accepts a TLS CA bundle.
+# The local test Mongo service (mongodb://localhost:27017) is plaintext.
+if mongo_uri and mongo_uri.startswith("mongodb+srv://"):
+    mongo = PyMongo(app, tlsCAFile=certifi.where())
+else:
+    mongo = PyMongo(app)
+
 
 # Home page -> list students
 @app.route('/')
@@ -24,19 +35,6 @@ def index():
     students = mongo.db.students.find()
     return render_template('index.html', students=students)
 
-@pytest.fixture
-def client():
-    flask_app.config["TESTING"] = True
-    with flask_app.test_client() as client:
-        yield client
-        
-def test_health_endpoint_returns_status(client):
-    response = client.get("/health")
-    assert response.status_code in (200, 503)
-    data = response.get_json()
-    assert "status" in data
-    assert data["status"] in ("healthy", "unhealthy")
-    
 # Health check endpoint for EC2/Deployment validation
 @app.route('/health')
 def health_check():
